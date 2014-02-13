@@ -1,6 +1,6 @@
 /*  AppcraftedManager.cs 
   — SDK to manage data on the Appcrafted service (http://www.appcrafted.com/)
-  version 0.1b — January 21, 2014
+  version 0.1c — Feb 12, 2014
   Copyright © 2014 Crafted, Inc.
 
   This software is provided 'as-is', without any express or implied
@@ -38,7 +38,7 @@ namespace CraftedInc.Appcrafted
 	}
 	class Asset {
 		public Dictionary<string, object> attributes = new Dictionary<string, object>();
-//		public string assetID;
+		public string assetID;
 	}
 	class AppcraftedManager : MonoBehaviour { //MonoBehaviour required for coroutine
 		private string endpoint = "http://api.appcrafted.com/v0/assets/";
@@ -122,7 +122,8 @@ namespace CraftedInc.Appcrafted
 				Container container = new Container();
 				this.containers.Add(containerID, container);
 			}
-			
+
+
 			//validate credentials
 			if (this.accessKey == null || this.secretKey == null) {
 				throw new System.MemberAccessException("missing credentials");
@@ -146,9 +147,11 @@ namespace CraftedInc.Appcrafted
 				
 				Asset asset = new Asset();
 				string currentAssetID = assetJSON.GetString("AssetID");
-				if (!this.containers[containerID].assets.ContainsKey(currentAssetID)){
-					this.containers[containerID].assets.Add(currentAssetID, asset);
-				}
+				this.containers[containerID].assets[currentAssetID] = asset;
+
+				asset.assetID = currentAssetID;
+
+
 				Debug.Log ("--- New asset: " + currentAssetID + " ---");
 				
 				//adding attributes
