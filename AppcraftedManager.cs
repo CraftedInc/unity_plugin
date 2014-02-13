@@ -38,6 +38,7 @@ namespace CraftedInc.Appcrafted
 	}
 	class Asset {
 		public Dictionary<string, object> attributes = new Dictionary<string, object>();
+//		public string assetID;
 	}
 	class AppcraftedManager : MonoBehaviour { //MonoBehaviour required for coroutine
 		private string endpoint = "http://api.appcrafted.com/v0/assets/";
@@ -93,9 +94,9 @@ namespace CraftedInc.Appcrafted
 				}
 			}
 			catch (KeyNotFoundException e){
-				if (!isResetting){
+//				if (!isResetting){
 					StartCoroutine(RetrieveAsset(containerID, assetID));
-				}
+//				}
 			}
 		}
 		
@@ -126,39 +127,6 @@ namespace CraftedInc.Appcrafted
 			if (this.accessKey == null || this.secretKey == null) {
 				throw new System.MemberAccessException("missing credentials");
 			}
-//#if UNITY_IPHONE
-//
-//			float timeOut = Time.time + requestTimeout;
-//			var request = new HTTP.Request("GET", url);
-//			request.SetHeader("Authorization", "Basic " + System.Convert.ToBase64String(System.Text.Encoding.ASCII.GetBytes(this.accessKey + ":" + this.secretKey)));
-//			request.Send();
-//			while(!request.isDone && Time.time <= timeOut)
-//			{
-//				yield return new WaitForEndOfFrame();
-//			}
-//			if (!request.isDone){ //if request is not done before timeout
-//				yield break;
-//			}
-//			if (request.exception!=null){ // check internet connection
-//				Debug.Log(request.exception);
-//				yield break;
-//			} else {
-//				var response = request.response;
-//				//inspect response code
-//				Debug.Log(response.status);
-//				//inspect headers
-//				Debug.Log(response.GetHeader("Content-Type"));
-//				//Get the body as a byte array
-//				//Debug.Log(response.bytes);
-//				//Or as a string
-//				Debug.Log(response.Text);
-//
-//				containerJSON = JSONObject.Parse(response.Text); 
-//			}
-//			
-//
-//
-//#else
 
 			Hashtable headers = new Hashtable();
 			headers["Authorization"] = "Basic " +
@@ -170,9 +138,6 @@ namespace CraftedInc.Appcrafted
 				yield break;
 			}
 			containerJSON = JSONObject.Parse(www.text);
-
-//#endif			 
-
 
 			//adding assets
 			for (int i = 0; i < containerJSON.GetArray("Assets").Length; i++){
@@ -205,7 +170,7 @@ namespace CraftedInc.Appcrafted
 							case "STRING":
 								string value = attributeJSON.GetString ("Value");
 								this.containers[containerID].assets[currentAssetID]
-								.attributes.Add(attributeName, value);
+								.attributes[attributeName] = value;
 								Debug.Log (attributeName + " : " 
 								           + this.containers[containerID]
 								           .assets[currentAssetID]
@@ -218,7 +183,7 @@ namespace CraftedInc.Appcrafted
 								Texture2D image = new Texture2D(imageObject.texture.width, imageObject.texture.height);
 								imageObject.LoadImageIntoTexture(image);
 								this.containers[containerID].assets[currentAssetID]
-								.attributes.Add(attributeName, image);
+								.attributes[attributeName] = image;
 								Debug.Log (attributeName + " : " 
 								           + this.containers[containerID]
 								           .assets[currentAssetID]
@@ -227,7 +192,7 @@ namespace CraftedInc.Appcrafted
 							case "NUMBER":
 								double number = attributeJSON.GetNumber("Value");
 								this.containers[containerID].assets[currentAssetID]
-								.attributes.Add(attributeName, number);
+								.attributes[attributeName] = number;
 								Debug.Log (attributeName + " : " 
 								           + this.containers[containerID]
 								           .assets[currentAssetID]
@@ -240,7 +205,7 @@ namespace CraftedInc.Appcrafted
 									number_array[j] = attributeJSON.GetArray("Value")[j].Number ;
 								}
 								this.containers[containerID].assets[currentAssetID]
-								.attributes.Add(attributeName, number_array);
+								.attributes[attributeName] = number_array;
 								break;
 							case "STRING_ARRAY":
 								int stringArrayLength = attributeJSON.GetArray("Value").Length;
@@ -249,7 +214,7 @@ namespace CraftedInc.Appcrafted
 									string_array[k] = attributeJSON.GetArray("Value")[k].Str ;
 								}
 								this.containers[containerID].assets[currentAssetID]
-								.attributes.Add(attributeName, string_array);
+								.attributes[attributeName] = string_array;
 								break;
 							}
 						}
